@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+VM=$1
+
+sudo echo "need to run this as root,  grabed sudo access"
+
+if [ $# -eq 1 ]
+then
+ echo "removing $VM vm"
+ sudo virsh destroy $VM 2> /dev/null
+ sudo virsh undefine $VM 2> /dev/null
+ sudo rm -rf "/var/lib/libvirt/images/$VM.*\.qcow2"
+else
+ echo "provide 1 parameter, vm NAME"
+fi
