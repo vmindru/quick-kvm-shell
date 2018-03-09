@@ -32,13 +32,13 @@ echo -en "Enter GW, default $CHANGE_GATE_DEFAULT: "
 read CHANGE_GATE ; if [[ -z $CHANGE_GATE ]] ; then CHANGE_GATE=$CHANGE_GATE_DEFAULT ; fi
 
 echo -en "Enter DNS, default $CHANGE_NS_DEFAULT: "
-read CHANGE_NS ; if [[ -z $CHANGE_NS ]] ; then CHANGE_NS=$CHANGE_NS_DEAFULT ; fi
+read CHANGE_NS ; if [[ -z $CHANGE_NS ]] ; then CHANGE_NS=$CHANGE_NS_DEFAULT ; fi
 
 
 sudo /bin/cp -f /srv/vm_ks_template.ks ${WWW_LOCATION}/vm_ks.ks
 echo "CHANGE FQDN to $FQDN"
 sudo sed -i 's/CHANGE_HOSTNAME/'$FQDN'/g' ${WWW_LOCATION}/vm_ks.ks
-echo "CHANGE IP_ADDRESSS to $IP_ADDRESS"
+echo "CHANGE IP_ADDRESS to $IP_ADDRESS"
 sudo sed -i 's/CHANGE_IP/'$IP_ADDRESS'/g' ${WWW_LOCATION}/vm_ks.ks
 echo "CHANGE CHANGE_GATE to $CHANGE_GATE"
 sudo sed -i 's/CHANGE_GATE/'$CHANGE_GATE'/g' ${WWW_LOCATION}/vm_ks.ks
@@ -55,19 +55,19 @@ OS_VARIANT_DEFAULT="rhel7"
 ISO_FILE="/srv/boot.iso"
 
 echo -en "Enter MEM_SIZE, default $MEM_SIZE_DEFAULT: "
-read MEM_SIZE_DEFAULT ; if [[ -z $MEM_SIZE_DEFAULT ]] ; then MEM_SIZE_DEFAULT=$MEM_SIZE_DEFAULT_DEAFULT ; fi
+read MEM_SIZE ; if [[ -z $MEM_SIZE ]] ; then MEM_SIZE=$MEM_SIZE_DEFAULT ; fi
 
 echo -en "Enter VCPUS, default $VCPUS_DEFAULT: "
-read VCPUS_DEFAULT ; if [[ -z $VCPUS_DEFAULT ]] ; then VCPUS_DEFAULT=$VCPUS_DEFAULT_DEAFULT ; fi
+read VCPUS ; if [[ -z $VCPUS ]] ; then VCPUS=$VCPUS_DEFAULT ; fi
 
 echo -en "Enter OS_VARIANT, default $OS_VARIANT_DEFAULT: "
-read OS_VARIANT_DEFAULT ; if [[ -z $OS_VARIANT_DEFAULT ]] ; then OS_VARIANT_DEFAULT=$OS_VARIANT_DEFAULT_DEAFULT ; fi
+read OS_VARIANT ; if [[ -z $OS_VARIANT ]] ; then OS_VARIANT=$OS_VARIANT_DEFAULT ; fi
 
 if [[ -f $ISO_FILE ]] ;
 then
   echo "disk ok"
 else
-  echo "missing boto.sio, run curl http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -O"
+  echo "missing boot.iso, run curl http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -O"
   exit 1
 fi
 
@@ -75,6 +75,26 @@ OS_TYPE="linux"
 echo -en "Enter virtual disk size in GB:"
 read DISK_SIZE ; if [[ $DISK_SIZE -gt 0 ]] ; then echo "DISK SIZE ${DISK_SIZE}G" ;  else  echo "DISK_SIZE must be valid INT" ; exit 1 ;  fi
 
+echo "Running virt-install with following params \
+sudo virt-install \
+     --name ${VM_NAME} \
+     --memory=${MEM_SIZE} \
+     --vcpus=${VCPUS} \
+     --os-type ${OS_TYPE} \
+     --location ${ISO_FILE} \
+     --disk size=${DISK_SIZE}  \
+     --network bridge=virbr0 \
+     --graphics=none \
+     --os-variant=${OS_VARIANT} \
+     --console pty,target_type=serial \
+     -x 'console=ttyS0,115200n8 serial' \
+     -x "ks=http://$CHANGE_GATE/vm_ks.ks" \
+     -x "ip=$IP_ADDRESS"\
+     -x "netmask=$CHANGE_NETMASK"\
+     -x "gateway=$CHANGE_GATE"\
+     -x "dns=$CHANGE_NS"\
+     -x "biosdevname=0 net.ifnames=0"
+"
 
 sudo virt-install \
      --name ${VM_NAME} \
