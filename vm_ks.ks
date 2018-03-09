@@ -8,7 +8,7 @@ reboot
 
 # network configuration
 
-network --bootproto=static --ip=CHANGE_IP --gateway=CHANGE_GATE  --netmask=CHANGE_NETMASK  --noipv6 --device=eth0 --nameserver=CHANGE_NS --ACTIVATE
+network --bootproto=static --ip=CHANGE_IP --gateway=CHANGE_GATE  --netmask=CHANGE_NETMASK  --noipv6 --device=eth0 --nameserver=CHANGE_NS --activate
 network  --hostname=CHANGE_HOSTNAME
 timezone UTC
 
@@ -28,7 +28,7 @@ autopart --type=lvm
 
 # security
 
-rootpw password 
+rootpw password
 selinux --enforcing
 
 # Software Packages
@@ -36,7 +36,7 @@ selinux --enforcing
 %packages --nobase --ignoremissing
 @core
 @base
-vim 
+vim
 bash-completion
 
 %end

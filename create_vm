@@ -21,12 +21,14 @@ CHANGE_GATE_DEFAULT='192.168.122.1'
 # Update kickstart file
 echo -en "FQDN. default ${VM_NAME}.$DOMAIN : "
 read FQDN ; if [[ -z $FQDN ]] ; then FQDN=${VM_NAME}.$DOMAIN ; fi
+echo "FQDN: $FQDN"
 
 echo -en "Enter IP Address, must be valid IP: "
-read IP_ADDRESS ; if ipcalc -c $IP_ADDRESS 2>/dev/null ; then echo "IP_ADDRESS: $IP_ADDRESS" ; else echo "$IP_ADDRESS invalid IP adress" ; exit 1 ; fi
+read IP_ADDRESS ; if ipcalc -c $IP_ADDRESS 2>/dev/null ; then  echo "IP_ADDRESS: $IP_ADDRESS" ; else echo "$IP_ADDRESS invalid IP adress" ; exit 1 ; fi
 
 echo -en "Enter Netmask, default 255.255.255.0: "
 read CHANGE_NETMASK ; if [[ -z $CHANGE_NETMASK ]] ; then CHANGE_NETMASK=255.255.255.0 ; fi
+echo "NETMASK: $CHANGE_NETMASK"
 
 echo -en "Enter GW, default $CHANGE_GATE_DEFAULT: "
 read CHANGE_GATE ; if [[ -z $CHANGE_GATE ]] ; then CHANGE_GATE=$CHANGE_GATE_DEFAULT ; fi
