@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 # make SURE httpd is installed and running
+sudo yum install -y qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer httpd ipcalc
+
 echo -en "WHAT is the DEFAULT domain for VM FQDN e.g mynet.net.org?: "
 read DOMAIN ; if [[ -z $DOMAIN ]] ; then DOMAIN="mynet.net.org" ; fi
 
 echo -en "WHAT is the DEFAULT domain for DNS to use e.g 8.8.8: "
 read CHANGE_NS ; if [[ -z $CHANGE_NS ]] ; then CHANGE_NS="8.8.8.8" ; fi
+if ipcalc -c $CHANGE_NS 2> /dev/null ; then echo "DEFAULT NS $CHANGE_NS"; else echo "$CAHNGE_NS is not a valid IP" ; fi
 
 sudo cp create_vm  destroy_vm vm_ks.ks /usr/bin/
 sudo cp vm_ks.ks /srv/vm_ks_template.ks
@@ -12,7 +15,6 @@ sudo chmod +x /bin/create_vm /usr/bin/destroy_vm
 sudo sed -i 's/^DOMAIN=.*$/'DOMAIN=$DOMAIN'/g' /usr/bin/create_vm
 sudo sed -i 's/^CHANGE_NS_DEFAULT=.*$/'CHANGE_NS_DEFAULT=$CHANGE_NS'/g' /usr/bin/create_vm
 
-sudo yum install -y qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer httpd
 
 if [[ -f $BOOT_ISO ]]
 then
