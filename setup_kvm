@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # make SURE httpd is installed and running
+BOOT_ISO="/srv/boot.iso"
 sudo yum install -y qemu-kvm qemu-img virt-manager libvirt libvirt-python libvirt-client virt-install virt-viewer httpd ipcalc
 
 echo -en "WHAT is the DEFAULT domain for VM FQDN e.g mynet.net.org?: "
@@ -18,9 +19,9 @@ sudo sed -i 's/^CHANGE_NS_DEFAULT=.*$/'CHANGE_NS_DEFAULT=$CHANGE_NS'/g' /usr/bin
 
 if [[ -f $BOOT_ISO ]]
 then
-    sudo curl http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -o /srv/boot.iso
-else
     echo "$BOOT_ISO already exists, skiping download"
+else
+    sudo curl http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -o $BOOT_ISO
 fi
 
 echo -en "IN order to allow kickstart, we should allow HTTP traffic, should we configure Firewall?? Say Yes: "
