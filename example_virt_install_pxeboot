@@ -1,0 +1,11 @@
+virt-install --name bare-metal-01 \
+--memory=2048 \
+--vcpus=1 \
+--os-type linux \
+--disk size=20,pool=srv \
+--network bridge=virbr0 \
+--graphics=none \
+--os-variant=rhel7 \
+--console pty,target_type=serial \
+--noautoconsole \
+--pxe
